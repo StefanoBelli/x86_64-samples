@@ -9,9 +9,12 @@ count_loopcc:
 	
 	xorq %rax, %rax
 	movq -8(%rbp), %rcx
+	movq $3, %rdx
 
 __get_there_again:
 	addq $2, %rax
+	dec %rdx
+	cmp $0, %rdx
 	loopnz __get_there_again
 	//-- possible substitutes --
 	//loopne __get_there_again
