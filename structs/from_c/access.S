@@ -14,7 +14,7 @@ byptr:
 	movq %rdi, %rbx
 
 	//
-	// HIGHER f0-f1-f2-f3---(this function's call stack)-- LOWER
+	// HIGHER f3-f2-f1-f0---(this function's call stack)-- LOWER
 	//        24 16 8  ^-----EFFECTIVE ADDRESS LOADED ON RBX
 	//        +  +  +
 	//Accessing higher addresses
