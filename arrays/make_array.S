@@ -19,7 +19,7 @@ make_array_method1:
 
 	// 4 (size) * 4 (number of elements) = 16 Bytes (size of array)
 	subq $16, %rsp
-	movl $3, -16(%rbp)
+	movl $0, -16(%rbp)
 	movl $1, -12(%rbp)
 	movl $2, -8(%rbp)
 	movl $3, -4(%rbp)
