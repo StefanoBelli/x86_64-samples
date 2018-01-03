@@ -21,7 +21,7 @@ movq   $0x1,-0x18(%rbp)
 
 Above, GCC is initializing fields
 
-The first element is put on the lowest address of the stack, the last one at [rbp - 0x30]
+The first element is put on the lowest address of the stack, the last one at [rbp - 0x18]
 
 ### By value
 
