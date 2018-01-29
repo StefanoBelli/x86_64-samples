@@ -1,5 +1,6 @@
 .global x86_cpuid_vendor
 .global x86_cpuid_features
+.global x86_cpuid_brand
 
 .text
 x86_cpuid_vendor:
@@ -28,4 +29,46 @@ x86_cpuid_features:
 	movl %ecx, (%rdi)
 	movl %edx, (%rsi)
 
+	ret
+
+x86_cpuid_brand:
+  #check if brand name is supported
+	movl $0x80000000, %eax
+	cpuid
+	
+	movl $1, %eax
+	
+	cmp $0x80000004, %eax
+	jl _brand_not_supported
+	
+	subq $16, %rsp
+	movl $0x80000001, %eax
+	movq $2, %rcx
+_full_string:
+	pushq %rcx
+	incl %eax
+	pushq %rax
+	
+	cpuid
+	
+	movl %eax, -16(%rsp)
+	movl %ebx, -12(%rsp)
+	movl %ecx, -8(%rsp)
+	movl %edx, -4(%rsp)
+	
+	movq $16, %rcx
+	leaq -16(%rsp), %rsi
+	rep movsb
+	
+	popq %rax
+	popq %rcx
+	
+	decq %rcx
+	cmpq $0, %rcx
+	jge _full_string
+	
+	addq $16, %rsp
+	xorl %eax, %eax
+	
+_brand_not_supported:
 	ret
