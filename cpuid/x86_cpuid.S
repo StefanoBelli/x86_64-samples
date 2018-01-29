@@ -1,8 +1,31 @@
 .global x86_cpuid_vendor
 .global x86_cpuid_features
 .global x86_cpuid_brand
+.global x86_has_cpuid
 
 .text
+# thanks to: https://wiki.osdev.org/CPUID
+x86_has_cpuid:
+	pushfq #store original values, before manipulation
+
+	pushfq #these are the values we're going to work with
+	xorl $2097152, (%rsp) #this number enables bit 22 (22-1 = 21th bit), the xor enables it
+	popfq #saved the xor'd value to flags register
+	pushfq #flags onto the stack, bit 22 might be changed after popping back
+	popq %rax #getting flags on the rax register to compare with the original value still on the stack
+	xorq (%rsp), %rax # xoring latest flags with the original values, after we put it to 1, if changed to 0
+	#then the bit 22 is set to 0 thanks to the OR operation (0 OR 0 EQ 0)
+
+	# as on rax we have the xor'd value, we have now to use the AND operation
+	# considering that 1 AND 0 EQ 0 (and vice-versa) but 1 AND 1 EQ 1
+	# so we are comparing the 21th bit, if on both side it is 1, cpuid is supported and a
+	# non-zero but positive value is returned
+	# %rax & $2097152
+	andq $2097152, %rax # 0 if not enabled, stored on rax
+
+	popfq #restore anyway the original values
+	ret
+
 x86_cpuid_vendor:
 	xorl %eax, %eax 
 	cpuid
@@ -64,7 +87,7 @@ _full_string:
 	popq %rcx
 	
 	decq %rcx
-	cmpq $0, %rcx
+	testq %rcx, %rcx
 	jge _full_string
 	
 	addq $16, %rsp
