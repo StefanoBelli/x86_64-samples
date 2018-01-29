@@ -1,3 +1,4 @@
+.global x86_cpuid_extnd_features
 .global x86_cpuid_vendor
 .global x86_cpuid_features
 .global x86_cpuid_brand
@@ -94,4 +95,19 @@ _full_string:
 	xorl %eax, %eax
 	
 _brand_not_supported:
+	ret
+
+x86_cpuid_extnd_features:
+	pushq %rdx
+
+	movl $7, %eax
+	xorl %ecx, %ecx
+	cpuid
+
+	movl %ebx, (%rdi)
+	movl %ecx, (%rsi)
+
+	popq %rax
+	movl %edx, (%rax)
+
 	ret
