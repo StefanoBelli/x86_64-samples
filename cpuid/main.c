@@ -10,6 +10,7 @@
 #define X86_EXTND_FEATURE_BMI_2(xebx) (xebx & (1 << 8))
 #define X86_EXTND_FEATURE_AVX_512_4VNNIW(xedx) (xedx & (1 << 2))
 #define X86_EXTND_FEATURE_SHA_INTEL_EXT(xebx) (xebx & (1 << 29))
+#define X86_IDENTIFY_STEPPING(xeax) (xeax & 0xF)
 
 #define YON(expr) (expr ? "yes" : "no")
 
@@ -46,7 +47,8 @@ int main() {
 	if(x86_cpuid_brand(brand_name))
 		puts("branding not supported");
 
-	printf("CPU vendor: %s\n"
+	printf("CPU Stepping: 0x%x\n"
+			"CPU vendor: %s\n"
 		   	"HyperThreading: %s\n"
 		   	"SSE4.2: %s\n"
 		   	"syscall: %s\n"
@@ -56,6 +58,7 @@ int main() {
 		   	"AVX-512/4VNNIW: %s\n"
 		   	"SHA Extensions: %s\n"
 			"Brand: %s\n",
+			X86_IDENTIFY_STEPPING(dest_eax_0),
 			vendor, 
 			YON(X86_FEATURE_HTT(dest_edx_0)),
 			YON(X86_FEATURE_SSE_4_2(dest_ecx_0)),
